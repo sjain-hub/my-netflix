@@ -1,32 +1,49 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Form } from "react-router-dom";
+import { validateData } from "../utils/helper";
 
 const LoginForm = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);
+  const [error, setError] = useState(null);
+  const email = useRef(null);
+  const pass = useRef(null);
 
   const toggleForm = () => {
     setIsLoginForm(!isLoginForm);
   };
 
+  const handleSubmit = () => {
+    console.log(email.current.value, pass.current.value);
+
+    const errMsg = validateData(email.current.value, pass.current.value);
+    setError(errMsg);
+  };
+
   return (
-    <Form className="absolute w-1/3 z-10 flex flex-col gap-6 p-16 bg-black rounded-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70">
-      <h1 className="text-white font-bold text-3xl tracking-wide">
+    <Form
+      onSubmit={() => handleSubmit()}
+      className="absolute w-1/3 z-10 flex flex-col gap-6 p-16 bg-black rounded-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70"
+    >
+      <h1 className="text-white font-bold text-3xl tracking-wide mb-4">
         {isLoginForm ? "Sign In" : "Sign Up"}
       </h1>
+      <p className="text-red-600">{error}</p>
       {!isLoginForm && (
         <input
-          className="bg-transparent border border-gray-500 p-4 rounded-md"
+          className="bg-transparent border border-gray-500 p-4 rounded-md text-white"
           type="text"
           placeholder="Enter Name"
         />
       )}
       <input
-        className="bg-transparent border border-gray-500 p-4 rounded-md"
+        ref={email}
+        className="bg-transparent border border-gray-500 p-4 rounded-md text-white"
         type="email"
         placeholder="Enter Email"
       />
       <input
-        className="bg-transparent border border-gray-500 p-4 rounded-md"
+        ref={pass}
+        className="bg-transparent border border-gray-500 p-4 rounded-md text-white"
         type="password"
         placeholder="Enter Password"
       />
@@ -34,7 +51,7 @@ const LoginForm = () => {
         {isLoginForm ? "Submit" : "Register"}
       </button>
       {isLoginForm ? (
-        <p className="text-white">
+        <p className="text-white mt-4">
           New to Netflix?
           <span
             onClick={() => toggleForm()}
@@ -44,7 +61,7 @@ const LoginForm = () => {
           </span>
         </p>
       ) : (
-        <p className="text-white">
+        <p className="text-white mt-4">
           Already a user?
           <span
             onClick={() => toggleForm()}
