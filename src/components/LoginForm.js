@@ -1,6 +1,11 @@
 import React, { useRef, useState } from "react";
 import { Form } from "react-router-dom";
 import { validateData } from "../utils/helper";
+import { auth } from "../utils/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 const LoginForm = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);
@@ -17,6 +22,40 @@ const LoginForm = () => {
 
     const errMsg = validateData(email.current.value, pass.current.value);
     setError(errMsg);
+
+    if (errMsg) return;
+
+    if (isLoginForm) {
+      signInWithEmailAndPassword(auth, email.current.value, pass.current.value)
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log(user);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setError(errorCode + " " + errorMessage);
+        });
+    } else {
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        pass.current.value
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log(user);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setError(errorCode + " " + errorMessage);
+        });
+    }
   };
 
   return (
